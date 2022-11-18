@@ -51,9 +51,17 @@ defined('BASEPATH') or exit('No direct script access allowed');
 */
 $route['default_controller']        = 'auth/login';
 
+
 $route['daftar-akun']               = 'auth/sign_up';
 
 $route['aktivasi/(:any)']           = 'auth/activation/$1';
+
+
+$route['cron-create']               = 'Cronjob/cronjobcreate';
+
+$route['presensi-pagi']             = 'Cronjob/absenpagi';
+
+$route['presensi-sore']             = 'Cronjob/absensore';
 
 $route['404_override']              = '';
 $route['translate_uri_dashes']      = FALSE;

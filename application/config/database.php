@@ -75,10 +75,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
   'dsn'  => '',
-  'hostname' => 'mipdevp.com',
-  'username' => 'mipdevpc_agung',
+  'hostname' => 'bt-pmp.com',
+  'username' => 'u1775320_agung',
   'password' => 'ReactNative1234%',
-  'database' => 'mipdevpc_curd_user',
+  'database' => 'u1775320_kepeg_gakkum',
   'dbdriver' => 'mysqli',
   'dbprefix' => '',
   'pconnect' => FALSE,
