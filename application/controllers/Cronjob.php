@@ -44,34 +44,41 @@ class Cronjob extends CI_Controller
       $jampagiplus1 = strtotime($jampagi) + 60;
 
       if ($jamsekarang === $jampagi || $jamsekarang > $jampagi) {
-        // if ($jamsekarang < $jampagiplus1) {
-        $cekMessage     = $this->CRONJOB->getMessage(['days' => $hariini, 'waktu_kirim_manual =' => null])->result();
-        $update     = 0;
-        foreach ($cekMessage as $message) {
-          $pesan    = "Selamat Pagi Bapak/Ibu <b>" . $message->employee_name . "</b>, Jangan Lupa untuk presensi kehadiran di pagi hari tanggal <b>" . $hariini . " - " . tgl_indo(date('Y-m-d')) . "</b>, <b> Abaikan Pesan ini Jika sudah presensi </b>";
-          $apilink  = $this->apiTelegram();
-          $telegram = @file_get_contents($apilink . "sendmessage?chat_id=" . $message->telegram_id . "&text=" . urlencode($pesan)  . "&parse_mode=HTML");
-          $telegram = json_decode($telegram, TRUE);
-          $dataUpdate = [
-            'message' => $pesan,
-            'waktu_pagi'  => '1',
-            'updated_at'  => date('Y-m-d H:i:s')
-          ];
-          $where    =
-            [
-              'id'    => $message->id,
+        if ($jamsekarang < $jampagiplus1) {
+          $cekMessage     = $this->CRONJOB->getMessage(['days' => $hariini, 'waktu_kirim_manual =' => null])->result();
+          $update     = 0;
+          foreach ($cekMessage as $message) {
+            $pesan    = "Selamat Pagi Bapak/Ibu <b>" . $message->employee_name . "</b>, <br> Jangan Lupa untuk presensi kehadiran di pagi hari ini <b>" . $hariini . " - " . tgl_indo(date('Y-m-d')) . "</b>, 
+            <br><b> Abaikan Pesan ini Jika sudah presensi </b>";
+            $apilink  = $this->apiTelegram();
+            $telegram = @file_get_contents($apilink . "sendmessage?chat_id=" . $message->telegram_id . "&text=" . urlencode($pesan)  . "&parse_mode=HTML");
+            $telegram = json_decode($telegram, TRUE);
+            $dataUpdate = [
+              'message' => $pesan,
+              'waktu_pagi'  => '1',
+              'updated_at'  => date('Y-m-d H:i:s')
             ];
-          $update  += $this->CRONJOB->updateMessage($dataUpdate, $where);
-        }
-        if ($update > 0) {
+            $where    =
+              [
+                'id'    => $message->id,
+              ];
+            $update  += $this->CRONJOB->updateMessage($dataUpdate, $where);
+            if ($update === count($cekMessage)) {
+              break;
+            }
+          }
+          if ($update > 0) {
+            $apilink  = $this->apiTelegram();
+            $telegramId = '1374218169';
+            $telegram = @file_get_contents($apilink . "sendmessage?chat_id=" . $telegramId . "&text=Berhasil mengirim sebanyak " . $update . " Data di Bot Message dari " . count($cekMessage) . " Pegawai yang terdaftar&parse_mode=HTML");
+            $telegram = json_decode($telegram, TRUE);
+          }
+        } else {
           $apilink  = $this->apiTelegram();
           $telegramId = '1374218169';
-          $telegram = @file_get_contents($apilink . "sendmessage?chat_id=" . $telegramId . "&text=Berhasil mengirim sebanyak " . $update . " Data di Bot Message dari " . count($cekMessage) . " Pegawai yang terdaftar&parse_mode=HTML");
+          $telegram = @file_get_contents($apilink . "sendmessage?chat_id=" . $telegramId . "&text=Jam Sudah Lewat&parse_mode=HTML");
           $telegram = json_decode($telegram, TRUE);
         }
-        // } else {
-        //   echo "Jam sudah lewat";
-        // }
       }
     }
   }
