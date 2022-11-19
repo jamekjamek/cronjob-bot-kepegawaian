@@ -113,7 +113,7 @@ class Cronjob extends CI_Controller
             if ($message->waktu_sore === '0') {
               $count++;
               $gender   = $message->employee_gender === 'L' ? "Bapak" : "Ibu";
-              $pesan    = "Selamat Sore $gender <b>" . $message->employee_name . "</b>, Jangan Lupa untuk presensi kehadiran di pagi hari ini <b>" . $hariini . " - " . tgl_indo(date('Y-m-d')) . "</b>,<b> Abaikan Pesan ini Jika sudah presensi </b>";
+              $pesan    = "Selamat Sore $gender <b>" . $message->employee_name . "</b>, Jangan Lupa untuk presensi pulang di sore hari ini <b>" . $hariini . " - " . tgl_indo(date('Y-m-d')) . "</b>,<b> Abaikan Pesan ini Jika sudah presensi </b>";
               $apilink  = $this->apiTelegram();
 
               $telegram = file_get_contents($apilink . "sendmessage?chat_id=" . $message->telegram_id . "&text=" . urlencode($pesan)  . "&parse_mode=HTML");
