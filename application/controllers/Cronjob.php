@@ -85,7 +85,7 @@ class Cronjob extends CI_Controller
         } else {
           $apilink  = $this->apiTelegram();
           $telegramId = '1374218169';
-          $telegram = @file_get_contents($apilink . "sendmessage?chat_id=" . $telegramId . "&text=Jam Sudah Lewat&parse_mode=HTML");
+          $telegram = @file_get_contents($apilink . "sendmessage?chat_id=" . $telegramId . "&text=Jam Pagi Sudah Lewat&parse_mode=HTML");
           $telegram = json_decode($telegram, TRUE);
         }
       }
@@ -103,41 +103,49 @@ class Cronjob extends CI_Controller
       $jamsore      = $cekSetting->row()->jam_pulang;
       $jamsore      = strtotime($jamsore);
       $jamsoreplus1 = $jamsore + 60;
+
       if ($jamsekarang === $jamsore || $jamsekarang > $jamsore) {
         if ($jamsekarang < $jamsoreplus1) {
           $cekMessage     = $this->CRONJOB->getMessage(['days' => $hariini, 'waktu_kirim_manual =' => null])->result();
           $update     = 0;
+          $count      = 0;
           foreach ($cekMessage as $message) {
-            $pesan    = "Selamat Sore Bapak/Ibu <b>" . $message->employee_name . "</b>,  Jangan Lupa untuk presensi kehadiran di sore hari ini <b>" . $hariini . " - " . tgl_indo(date('Y-m-d')) . "</b>, 
-            <b> Abaikan Pesan ini Jika sudah presensi </b>";
-            $apilink  = $this->apiTelegram();
-            $telegram = @file_get_contents($apilink . "sendmessage?chat_id=" . $message->telegram_id . "&text=" . urlencode($pesan)  . "&parse_mode=HTML");
-            $telegram = json_decode($telegram, TRUE);
-            $dataUpdate = [
-              // 'message' => $pesan,
-              'waktu_sore'  => '1',
-              'waktu_kirim_sore' => date('H:i:s', time()),
-              'updated_at'  => date('Y-m-d H:i:s')
-            ];
-            $where    =
-              [
-                'id'    => $message->id,
-              ];
-            $update  += $this->CRONJOB->updateMessage($dataUpdate, $where);
-            // if ($update === count($cekMessage)) {
-            //   break;
-            // }
+            if ($message->waktu_sore === '0') {
+              $count++;
+              $gender   = $message->employee_gender === 'L' ? "Bapak" : "Ibu";
+              $pesan    = "Selamat Sore $gender <b>" . $message->employee_name . "</b>, Jangan Lupa untuk presensi kehadiran di pagi hari ini <b>" . $hariini . " - " . tgl_indo(date('Y-m-d')) . "</b>,<b> Abaikan Pesan ini Jika sudah presensi </b>";
+              $apilink  = $this->apiTelegram();
+
+              $telegram = file_get_contents($apilink . "sendmessage?chat_id=" . $message->telegram_id . "&text=" . urlencode($pesan)  . "&parse_mode=HTML");
+              $telegram = json_decode($telegram, TRUE);
+              if (@$telegram['ok'] === true) {
+                $dataUpdate = [
+                  'message' => $pesan,
+                  'waktu_sore'  => '1',
+                  'waktu_kirim_sore'  => date('H:i:s', time()),
+                  'updated_at'  => date('Y-m-d H:i:s')
+                ];
+                $where    =
+                  [
+                    'id'    => $message->id,
+                  ];
+                $update  += $this->CRONJOB->updateMessage($dataUpdate, $where);
+                // if ($update === count($cekMessage)) {
+                //   break;
+                // }
+              }
+            }
           }
           if ($update > 0) {
             $apilink  = $this->apiTelegram();
             $telegramId = '1374218169';
-            $telegram = @file_get_contents($apilink . "sendmessage?chat_id=" . $telegramId . "&text=Berhasil mengirim sebanyak " . $update . " Data di Bot Message dari " . count($cekMessage) . " Pegawai yang terdaftar&parse_mode=HTML");
+            $telegram = @file_get_contents($apilink . "sendmessage?chat_id=" . $telegramId . "&text=Berhasil mengirim notifikasi presensi sore sebanyak " . $update . " Data di Bot Message dari " . $count . " Pegawai yang terdaftar&parse_mode=HTML");
             $telegram = json_decode($telegram, TRUE);
           }
         } else {
           $apilink  = $this->apiTelegram();
           $telegramId = '1374218169';
-          $telegram = @file_get_contents($apilink . "sendmessage?chat_id=" . $telegramId . "&text=Jam Sudah Lewat&parse_mode=HTML");
+          $telegram = @file_get_contents($apilink . "sendmessage?chat_id=" . $telegramId . "&text=Jam Sore Sudah Lewat&parse_mode=HTML");
           $telegram = json_decode($telegram, TRUE);
         }
       }
