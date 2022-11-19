@@ -83,10 +83,10 @@ class Cronjob extends CI_Controller
             $telegram = json_decode($telegram, TRUE);
           }
         } else {
-          $apilink  = $this->apiTelegram();
-          $telegramId = '1374218169';
-          $telegram = @file_get_contents($apilink . "sendmessage?chat_id=" . $telegramId . "&text=Jam Pagi Sudah Lewat&parse_mode=HTML");
-          $telegram = json_decode($telegram, TRUE);
+          // $apilink  = $this->apiTelegram();
+          // $telegramId = '1374218169';
+          // $telegram = @file_get_contents($apilink . "sendmessage?chat_id=" . $telegramId . "&text=Jam Pagi Sudah Lewat&parse_mode=HTML");
+          // $telegram = json_decode($telegram, TRUE);
         }
       }
     }
@@ -143,10 +143,10 @@ class Cronjob extends CI_Controller
             $telegram = json_decode($telegram, TRUE);
           }
         } else {
-          $apilink  = $this->apiTelegram();
-          $telegramId = '1374218169';
-          $telegram = @file_get_contents($apilink . "sendmessage?chat_id=" . $telegramId . "&text=Jam Sore Sudah Lewat&parse_mode=HTML");
-          $telegram = json_decode($telegram, TRUE);
+          // $apilink  = $this->apiTelegram();
+          // $telegramId = '1374218169';
+          // $telegram = @file_get_contents($apilink . "sendmessage?chat_id=" . $telegramId . "&text=Jam Sore Sudah Lewat&parse_mode=HTML");
+          // $telegram = json_decode($telegram, TRUE);
         }
       }
     }
